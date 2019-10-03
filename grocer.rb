@@ -16,23 +16,28 @@ w_cart
 end
 
 def apply_coupons(cart, coupons)
-  coupons.each do |coupon|
-    coupon.each do |attribute, value|
-      name = coupon[:item]
-      if cart[name] && cart[name][:count] >= coupon[:num]
-        if cart["#{name} W/COUPON"]
-          cart["#{name} W/COUPON"][:count] += 1
-        else
-          cart["#{name} W/COUPON"] = {
-          :price => coupon[:cost],
-          :clearance => cart[name][:clearance], :count => 1}
-        end
+  return cart if coupons == []
+  w_cart= cart
 
-      cart[name][:count] -= coupon[:num]
+  coupons.each do |coupon|
+    name= coupon[:item]
+    n_coupons= coupon[:num]
+    price= coupon[:cost]
+
+    if cart.include?(name) && cart[name][:count]>= n_coupons
+    w_cart[name][:count]-= n_coupons
+      if w_cart["#{name} W/COUPON"]
+      w_cart["#{name} W/COUPON"][:count] += 1
+      else
+       w_cart["#{name} W/COUPON"] = {
+           :price => coupon[:cost],
+           :clearance => w_cart[name][:clearance],
+           :count => 1
+         }
+      end
     end
   end
-end
-cart
+w_cart
 end
 
 def apply_clearance(cart)
